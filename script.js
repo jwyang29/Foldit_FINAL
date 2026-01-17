@@ -22,7 +22,7 @@ const GUIDES = {
 let classifier;
 let currentCategory = null; 
 
-// 1. 초기화
+// 1. 앱 초기화 및 랜딩 애니메이션
 async function initApp() {
     const container = document.getElementById('animation-container');
     const typingTxt = document.getElementById('typing-text');
@@ -31,7 +31,17 @@ async function initApp() {
     const wrapper = document.getElementById('typing-wrapper');
     const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
-    // 랜딩 애니메이션
+    // [중요] 스크롤 및 리사이즈 이벤트 전역 등록
+    window.addEventListener('resize', () => {
+         // Tab 2가 활성화된 상태라면 리사이즈 시 선을 다시 그림
+         if(document.getElementById('tab2').style.display === 'block') {
+             drawConnector();
+             updateScrollPath();
+         }
+    });
+    window.addEventListener('scroll', updateScrollPath);
+
+    // 랜딩 애니메이션 시작
     await delay(700); container.classList.add('expanded');
     await delay(500);
     const slogan = "Fold what you want, make it yours";
@@ -41,28 +51,21 @@ async function initApp() {
     await delay(700); container.classList.add('orange-mode');
     await delay(1200); landing.style.opacity = '0';
     
+    // 메인 페이지 진입
     setTimeout(() => {
         landing.style.display = 'none';
         mainPage.style.display = 'block';
         setTimeout(() => {
             mainPage.style.opacity = '1';
             document.body.style.overflowY = 'auto';
-            showTab(1); 
-            initHero3D(); 
-            preloadModel(); 
+            showTab(1); // 첫 탭은 About
+            initHero3D(); // 3D 배경 로드
+            preloadModel(); // AI 모델 로드
         }, 50);
     }, 800);
 }
 
-// 2. 모델 로드
-function preloadModel() {
-    console.log("AI Loading...");
-    classifier = ml5.imageClassifier(TM_URL + 'model.json', () => {
-        console.log("AI Loaded!");
-    });
-}
-
-// 3. 탭 전환
+// 2. 탭 전환 로직
 function showTab(num) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => {
@@ -73,33 +76,132 @@ function showTab(num) {
     document.querySelectorAll('.tab-btn')[num-1].classList.add('active');
     const activeContent = document.querySelectorAll('.tab-content')[num-1];
     activeContent.style.display = 'block';
+    
+    // [핵심] Tab 2 (APP UI) 진입 시 연결선 그리기
+    if (num === 2) {
+        setTimeout(() => {
+            drawConnector();
+            updateScrollPath();
+        }, 100); // DOM 렌더링 확보를 위한 딜레이
+    }
+
     setTimeout(() => activeContent.classList.add('active'), 10);
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// [NEW] 데모 스텝으로 이동 & 스크롤
+// 3. 데모 스텝 바로가기 (About 탭의 카드 클릭 시)
 function goToDemoStep(stepNum) {
-    // 1. DEMO UI 탭(2번) 활성화
     showTab(2);
-
-    // 2. 탭이 렌더링될 시간을 아주 잠깐 준 뒤 스크롤 이동
     setTimeout(() => {
         const targetId = `demo-step-${stepNum}`;
         const targetElement = document.getElementById(targetId);
-
         if (targetElement) {
-            targetElement.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'center' 
-            });
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }, 100);
 }
 
-// 4. 카테고리 선택
+// =========================================================
+// [기능] APP UI 연결선 그리기 (SVG Mask 방식)
+// =========================================================
+
+// [수정됨] 점선 그리기 함수 (Step 4 제거 -> 1, 2, 3번만 연결)
+function drawConnector() {
+    const container = document.querySelector('.demo-container');
+    const pathBg = document.getElementById('path-bg');
+    const pathActive = document.getElementById('path-active');
+    const pathMask = document.getElementById('path-mask-line');
+    
+    // HTML에 SVG나 ID가 없으면 실행 중지
+    if (!container || !pathBg) return;
+
+    const m1 = document.getElementById('mockup-1');
+    const m2 = document.getElementById('mockup-2');
+    const m3 = document.getElementById('mockup-3');
+    // m4 삭제함
+
+    // 1, 2, 3번 중 하나라도 없으면 중단
+    if (!m1 || !m2 || !m3) return;
+
+    // 좌표 계산 (컨테이너 기준)
+    const getCenter = (el) => {
+        const rect = el.getBoundingClientRect();
+        const contRect = container.getBoundingClientRect();
+        return {
+            x: (rect.left + rect.width / 2) - contRect.left,
+            y: (rect.top + rect.height / 2) - contRect.top
+        };
+    };
+
+    const p1 = getCenter(m1);
+    const p2 = getCenter(m2);
+    const p3 = getCenter(m3);
+
+    // 부드러운 곡선 경로 생성 (1->2, 2->3 까지만)
+    let d = `M ${p1.x} ${p1.y} `;
+    d += `C ${p1.x} ${p1.y + 200}, ${p2.x} ${p2.y - 200}, ${p2.x} ${p2.y} `;
+    d += `C ${p2.x} ${p2.y + 200}, ${p3.x} ${p3.y - 200}, ${p3.x} ${p3.y} `;
+    // 3->4 연결 코드 삭제 완료
+
+    // 경로 적용
+    pathBg.setAttribute('d', d);
+    pathActive.setAttribute('d', d);
+    pathMask.setAttribute('d', d);
+
+    // 마스크 초기화
+    const length = pathMask.getTotalLength();
+    pathMask.style.strokeDasharray = length;
+    pathMask.style.strokeDashoffset = length;
+}
+
+// 스크롤 위치에 따른 선 그리기 (마스크 제어)
+function updateScrollPath() {
+    // Tab 2가 아니면 실행하지 않음
+    if(document.getElementById('tab2').style.display !== 'block') return;
+
+    const pathMask = document.getElementById('path-mask-line');
+    const pathBg = document.getElementById('path-bg');
+    
+    // 안전장치: 선이 그려지지 않았다면 다시 그림
+    if (!pathBg || pathBg.getAttribute('d') === "") {
+        drawConnector();
+        return;
+    }
+
+    const length = pathMask.getTotalLength();
+    const container = document.querySelector('.demo-container');
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+    
+    // 애니메이션 구간 설정 (화면 높이의 80% 지점 ~ 20% 지점 사이)
+    const start = windowHeight * 0.8; 
+    
+    const scrolled = start - rect.top; 
+    let percentage = scrolled / rect.height;
+
+    // 퍼센트 제한 (0 ~ 1.05)
+    if (percentage < 0) percentage = 0;
+    if (percentage > 1.05) percentage = 1.05;
+
+    // 스크롤된 비율만큼 마스크의 offset을 줄여서 하얀 실선을 드러냄 -> 주황색 점선이 보임
+    const drawLength = length * percentage;
+    pathMask.style.strokeDashoffset = (length - drawLength) + 'px';
+}
+
+// =========================================================
+// [기능] AI Lab 로직
+// =========================================================
+function preloadModel() {
+    console.log("AI Loading...");
+    classifier = ml5.imageClassifier(TM_URL + 'model.json', () => {
+        console.log("AI Loaded!");
+    });
+}
+
 function selectCategory(cat) {
     currentCategory = cat;
-    
     document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(`cat-${cat}`).classList.add('active');
     
@@ -115,7 +217,6 @@ function selectCategory(cat) {
     document.getElementById('upload-placeholder').style.display = 'block';
 }
 
-// 5. 이미지 업로드
 function handleAIUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -127,7 +228,6 @@ function handleAIUpload(event) {
         imgEl.src = e.target.result;
         imgEl.style.display = 'block';
         document.getElementById('upload-placeholder').style.display = 'none';
-        
         document.getElementById('loading-spinner').style.display = 'block';
         document.getElementById('ai-result-overlay').style.display = 'none';
         
@@ -136,16 +236,14 @@ function handleAIUpload(event) {
     reader.readAsDataURL(file);
 }
 
-// 6. 분류 실행
 function classifyImage(imgElement) {
     if (!classifier) {
-        alert("AI Model loading... Wait a sec.");
+        alert("AI Model loading...");
         return;
     }
 
     classifier.classify(imgElement, (error, results) => {
         document.getElementById('loading-spinner').style.display = 'none';
-
         if (error) { console.error(error); return; }
 
         const topResult = results[0];
@@ -167,17 +265,17 @@ function classifyImage(imgElement) {
         } else {
             if(label === 'Background') labelDiv.innerHTML = "No Object Detected";
             else labelDiv.innerHTML = `Warning: Looks like <b>${label}</b>,<br>not a ${currentCategory}.`;
-            
             labelDiv.style.color = "#ff3366";
             barDiv.style.backgroundColor = "#ff3366";
         }
-
         barDiv.style.width = confidence + "%";
         percentDiv.innerText = confidence + "%";
     });
 }
 
-// 3D 배경
+// =========================================================
+// [기능] 3D 배경 (Three.js)
+// =========================================================
 function initHero3D() {
     const container = document.getElementById('hero-3d-bg');
     if (!container) return;
