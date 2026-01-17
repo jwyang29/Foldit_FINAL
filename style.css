@@ -11,14 +11,13 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Inter', sans-serif; background: #fff; color: var(--text-main); line-height: 1.5; overflow-x: hidden; }
 
-/* --- [기존 스타일] --- */
+/* Landing Animation */
 #landing { position: fixed; inset: 0; background: #fff; display: flex; justify-content: center; align-items: center; z-index: 2000; transition: opacity 0.8s; }
 .animation-container { display: flex; align-items: center; letter-spacing: -5px; }
 .bold-text { font-size: var(--font-landing); font-weight: 900; color: var(--black); transition: color 0.6s ease; }
 #typing-wrapper { max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; display: flex; align-items: center; transition: all 0.8s cubic-bezier(0.85, 0, 0.15, 1); }
-#typing-text { font-size: 32px; font-weight: 400; color: #555; font-style: italic; letter-spacing: 0; padding-right: 10px; /* [추가] 오른쪽 여백을 주어 기울임꼴 끝이 잘리지 않게 함 */
-}
-.animation-container.expanded #typing-wrapper { max-width: 650px; opacity: 1; margin: 0 50px; }
+#typing-text { font-size: 32px; font-weight: 400; color: #555; font-style: italic; letter-spacing: 0; padding-right: 10px; }
+.animation-container.expanded #typing-wrapper { max-width: 1000px; opacity: 1; margin: 0 50px; }
 .animation-container.orange-mode .bold-text { color: var(--primary); }
 
 #main-page { opacity: 0; transition: opacity 1s ease; max-width: 1200px; margin: 0 auto; padding: 0 40px; padding-bottom: 100px; }
@@ -37,93 +36,49 @@ body { font-family: 'Inter', sans-serif; background: #fff; color: var(--text-mai
 #hero-3d-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.8; pointer-events: none; }
 .hero-content { position: relative; z-index: 10; }
 .badge { background: #FDECEA; color: var(--primary); padding: 8px 18px; border-radius: 30px; font-size: 0.9rem; font-weight: 700; margin-bottom: 25px; display: inline-block; }
-.about-hero h2 { font-size: 4rem; font-weight: 900; line-height: 1.1; margin-bottom: 30px; letter-spacing: -2px; }
+.about-hero h2 { font-size: 4rem; font-weight: 900; line-height: 1.1; margin-bottom: 10px; letter-spacing: -2px; }
 .about-hero .highlight { color: var(--primary); }
 .about-hero p { font-size: 1.3rem; color: var(--text-sub); max-width: 750px; margin: 0 auto; line-height: 1.5; }
 
 /* Feature Grid */
-.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin: 60px 0; }
-.feature-card { background: var(--bg-light); padding: 50px 40px; border-radius: 32px; transition: 0.4s; border: 1px solid transparent; }
+.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin: 20px 0; }
+.feature-text h4 { color: var(--primary); font-weight: 700; margin-bottom: 5px; text-transform: uppercase; }
+.feature-card { background: var(--bg-light); padding: 50px 40px; border-radius: 32px; transition: 0.4s; border: 1px solid transparent; cursor: pointer; }
 .feature-card:hover { transform: translateY(-12px); background: #fff; border-color: #eee; box-shadow: 0 30px 60px rgba(0,0,0,0.08); }
 .card-icon { font-size: 3rem; margin-bottom: 25px; display: block; }
 
-.split-section { 
-    display: flex; 
-    align-items: center; 
-    gap: 80px; 
-    padding: 100px 0; 
-}
-.split-text { 
-    flex: 0.8; 
-    padding-left: 20px; /* 시각적 균형 */
-}
+/* Split Section & Accordion UI */
+.split-section { display: flex; align-items: center; gap: 80px; padding: 120px 0; }
+.split-text { flex: 0.6; padding-left: 20px; }
 .split-text h4 { color: var(--primary); font-weight: 700; margin-bottom: 15px; text-transform: uppercase; }
 .split-text h2 { font-size: 3rem; font-weight: 900; margin-bottom: 20px; line-height: 1.2; }
-/* 아코디언 비주얼 영역 (왼쪽): 조금 더 좁게(Compact) 설정 */
-/* --- [수정] 비주얼 영역 스타일 --- */
-.split-visual {
-    flex: 1.2;
-    height: 400px; /* 직사각형 높이 유지 */
-    background: var(--bg-light);
-    border-radius: 32px;
-    overflow: hidden;
-    padding: 20px;
-    position: relative; /* 안내 문구 위치 배치를 위해 필수 */
-}
-/* 3. 사이드바도 높이에 맞춰 늘어남 */
-.ui-sidebar {
-    width: 60px;
-    background: #fff;
-    border-radius: 20px;
-    height: 100%; /* 높이 100% */
-}
-/* 5. 각 패널(아코디언) 설정 */
-.ui-pane {
-    flex: 1;
-    border-radius: 20px;
-    overflow: hidden;
-    position: relative;
-    transition: flex 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-    cursor: pointer;
-    height: 100%; /* 패널도 높이 100% */
-}
+.split-visual { flex: 0.9; height: 400px; background: var(--bg-light); border-radius: 32px; overflow: hidden; padding: 20px; position: relative; }
 
-/* 마우스 호버 시 확장 */
-.ui-pane:hover {
-    flex: 4; /* 4배 더 넓게 확장 */
+.interaction-hint {
+    position: absolute; top: 30px; left: 50%; transform: translateX(-50%); z-index: 20;
+    background: rgba(0, 0, 0, 0.6); color: #fff; padding: 10px 20px; border-radius: 30px;
+    font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;
+    backdrop-filter: blur(5px); pointer-events: none; transition: opacity 0.3s ease;
 }
+.split-visual:hover .interaction-hint { opacity: 0; }
 
-/* 이미지 스타일 (자동 크롭 및 센터링) */
-/* 6. [중요] 이미지가 세로로 길어진 영역을 꽉 채우며 크롭되도록 설정 */
-.split-img {
-    width: 100%;
-    height: 100%; /* 이미지 높이 100% */
-    object-fit: cover; /* 비율 유지하며 꽉 채우기 (넘치면 잘림) */
-    display: block;
-    filter: brightness(0.9);
-}
-.ui-pane:hover .split-img {
-    transform: scale(1.05); /* 호버 시 살짝 줌 인 효과 */
-}
+.mock-ui { display: flex; gap: 20px; height: 100%; width: 100%; }
+.ui-main { flex: 1; display: flex; gap: 15px; height: 100%; width: 100%; }
+.ui-pane { flex: 1; background: #fff; border-radius: 20px; overflow: hidden; position: relative; transition: flex 0.5s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; height: 100%; }
+.ui-pane:hover { flex: 3; }
+.split-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; filter: brightness(0.95); }
+.ui-pane:hover .split-img { transform: scale(1.05); }
 
-/* 라벨 스타일 (선택사항) */
-.pane-label {
-    position: absolute;
-    bottom: 15px; left: 15px;
-    color: #fff;
-    font-weight: 900;
-    text-shadow: 0 2px 5px rgba(0,0,0,0.5);
-    opacity: 0;
-    transform: translateY(10px);
-    transition: 0.3s;
+.pane-label { 
+    position: absolute; bottom: 20px; left: 20px; color: #fff; 
+    font-weight: 900; text-shadow: 0 2px 10px rgba(0,0,0,0.5); 
+    opacity: 0; transform: translateY(10px); transition: 0.3s; 
+    font-size: 1.2rem;
 }
-.ui-pane:hover .pane-label {
-    opacity: 1;
-    transform: translateY(0);
-}
+.ui-pane:hover .pane-label { opacity: 1; transform: translateY(0); }
 
 /* Demo UI (Tab 2) */
-.demo-container { padding: 60px 0; }
+.demo-container { padding: 30px 0; }
 .demo-row { display: flex; align-items: center; justify-content: space-between; gap: 80px; margin-bottom: 140px; }
 .demo-row.reverse { flex-direction: row-reverse; }
 .text-side { flex: 1; }
@@ -131,13 +86,11 @@ body { font-family: 'Inter', sans-serif; background: #fff; color: var(--text-mai
 .demo-title { font-size: 2.8rem; font-weight: 900; margin-bottom: 25px; color: var(--black); line-height: 1.2; }
 .demo-desc { font-size: 1.15rem; color: var(--text-sub); line-height: 1.7; word-break: keep-all; }
 .mockup-side { flex: 1.3; display: flex; justify-content: center; }
-.iphone-mockup.horizontal { width: 100%; max-width: 620px; aspect-ratio: 852 / 393; background: var(--iphone-frame); border-radius: 50px; padding: 10px; position: relative; box-shadow: 0 40px 100px rgba(0,0,0,0.15); border: 3px solid #48484a; }
-.iphone-mockup.horizontal .dynamic-island { position: absolute; left: 20px; top: 50%; width: 8px; height: 70px; background: #000; border-radius: 20px; transform: translateY(-50%); z-index: 10; }
-.iphone-mockup.horizontal .screen { width: 100%; height: 100%; background: #fdfdfd; border-radius: 40px; overflow: hidden; position: relative; }
-.demo-viz { width: 100%; height: 100%; transition: 0.5s; }
-.bg-orange { background: var(--primary); }
-.bg-black { background: #111; }
-.bg-gray { background: #e5e5e7; }
+.iphone-mockup.horizontal { width: 100%; max-width: 600px; aspect-ratio: 835 / 407; background: var(--iphone-frame); border-radius: 35px; padding: 10px; position: relative; box-shadow: 0 40px 100px rgba(0,0,0,0.15); border: 1px solid #48484a; }
+.iphone-mockup.horizontal .screen { width: 100%; height: 100%; background: #fdfdfd; border-radius: 25px; overflow: hidden; position: relative; }
+
+/* [중요] 비디오 비율 유지 (Tab 2 수정 대응) */
+.demo-viz { width: 100%; height: 100%; transition: 0.5s; object-fit: cover; }
 .bg-dark-gray { background: #333; }
 
 /* AI Workstation (Tab 3) */
@@ -148,7 +101,6 @@ body { font-family: 'Inter', sans-serif; background: #fff; color: var(--text-mai
     margin: 40px auto;
     align-items: flex-start;
 }
-
 .ai-step-box {
     background: #fff;
     border: 1px solid #eee;
@@ -160,7 +112,6 @@ body { font-family: 'Inter', sans-serif; background: #fff; color: var(--text-mai
     transition: 0.3s;
 }
 .ai-step-box.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
-
 .step-label { font-size: 12px; font-weight: 900; color: var(--primary); margin-bottom: 10px; letter-spacing: 1px; }
 .ai-step-box h3 { font-size: 1.5rem; font-weight: 900; margin-bottom: 10px; }
 .step-desc { font-size: 0.95rem; color: var(--text-sub); margin-bottom: 25px; }
@@ -219,7 +170,7 @@ body { font-family: 'Inter', sans-serif; background: #fff; color: var(--text-mai
 
 /* About Footer Update */
 .about-footer {
-    padding: 160px 20px;
+    padding: 120px 20px;
     background: linear-gradient(to bottom, #fff, #f9f9fb);
     border-top: 1px solid #eee;
     text-align: center;
@@ -274,45 +225,27 @@ body { font-family: 'Inter', sans-serif; background: #fff; color: var(--text-mai
     .footer-title { font-size: 2.5rem; }
     .cta-button-large { padding: 18px 45px; font-size: 1.1rem; }
 }
-/* Feature Card Cursor */
-.feature-card { cursor: pointer; }
-/* 2. 내부 UI 프레임이 부모 높이를 꽉 채우도록 설정 */
-.mock-ui {
-    display: flex;
-    gap: 20px;
-    height: 100%; /* 높이 100% 필수 */
-}
-/* 4. 메인 영역 설정 */
-.ui-main {
-    flex: 1;
-    display: flex;
-    gap: 10px;
-    height: 100%; /* 높이 100% */
-}
-/* --- [추가] 마우스 오버 안내 배지 스타일 --- */
-.interaction-hint {
-    position: absolute;
-    top: 30px; /* 상단에서 떨어진 거리 */
-    left: 50%;
-    transform: translateX(-50%); /* 정확히 중앙 정렬 */
-    z-index: 20; /* 이미지보다 위에 오도록 */
-    
-    background: rgba(0, 0, 0, 0.6); /* 반투명 검정 배경 */
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 30px;
-    
-    font-size: 0.9rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    backdrop-filter: blur(5px); /* 배경 흐림 효과 (고급스러움) */
-    pointer-events: none; /* 마우스가 이 배지를 통과하여 아래 이미지를 건드릴 수 있게 */
-    transition: opacity 0.3s ease;
+/* [STEP 2] 점선 애니메이션 스타일 추가 */
+
+/* 1. 선을 그릴 기준점 잡기 */
+.demo-container {
+    position: relative;
 }
 
-/* 사용자가 마우스를 올리면 안내 문구는 사라지게 (선택사항, 원치 않으면 삭제 가능) */
-.split-visual:hover .interaction-hint {
-    opacity: 0; 
+/* 2. SVG 캔버스 위치 (목업 뒤로 보내기) */
+.svg-connector-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* 마우스가 선을 통과하게 설정 */
+    z-index: 0; 
+    overflow: visible;
+}
+
+/* 3. 목업이 선 위로 올라오게 설정 */
+.demo-row, .mockup-side {
+    position: relative;
+    z-index: 2;
 }
