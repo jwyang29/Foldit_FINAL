@@ -241,7 +241,7 @@ body { font-family: 'Inter', sans-serif; background: #fff; color: var(--text-mai
         border-width: 2px !important; 
         
         /* 모서리 곡률을 줄임 (기존 40px~50px -> 20px~25px 추천) */
-        border-radius: 10px !important; 
+        border-radius: 6px !important; 
         
         /* 모바일에서는 목업 자체의 패딩(안쪽 여백)도 줄여야 화면이 덜 답답합니다 */
         padding: 4px !important;
@@ -249,7 +249,7 @@ body { font-family: 'Inter', sans-serif; background: #fff; color: var(--text-mai
 
     /* 2. 목업 내부의 화면(스크린) 곡률도 함께 맞춰줘야 어색하지 않습니다 */
     .iphone-screen {
-        border-radius: 18px !important; /* 프레임보다 5~7px 정도 작게 설정 */
+        border-radius: 4px !important; /* 프레임보다 5~7px 정도 작게 설정 */
     }
     
 }
