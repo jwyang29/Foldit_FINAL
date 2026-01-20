@@ -119,8 +119,8 @@ body { font-family: 'Inter', sans-serif; background: #fff; color: var(--text-mai
 .demo-title { font-size: 2.8rem; font-weight: 900; margin-bottom: 25px; color: var(--black); line-height: 1.2; }
 .demo-desc { font-size: 1.15rem; color: var(--text-sub); line-height: 1.7; word-break: keep-all; }
 .mockup-side { flex: 1.3; display: flex; justify-content: center; position: relative; z-index: 2; }
-.iphone-mockup.horizontal { width: 100%; max-width: 620px; aspect-ratio: 832 / 410; background: var(--iphone-frame); border-radius: 30px; padding: 5px; position: relative; box-shadow: 0 40px 100px rgba(0,0,0,0.15); border: 3px solid #48484a; }
-.iphone-mockup.horizontal .screen { width: 100%; height: 100%; background: #fdfdfd; border-radius: 20px; overflow: hidden; position: relative; }
+.iphone-mockup.horizontal { width: 100%; max-width: 620px; aspect-ratio: 832 / 410; background: var(--iphone-frame); border-radius: 25px; padding: 10px; position: relative; box-shadow: 0 40px 100px rgba(0,0,0,0.15); border: 3px solid #48484a; }
+.iphone-mockup.horizontal .screen { width: 100%; height: 100%; background: #fdfdfd; border-radius: 15px; overflow: hidden; position: relative; }
 
 .demo-viz { width: 100%; height: 100%; transition: 0.5s; object-fit: cover; }
 .bg-dark-gray { background: #333; }
